@@ -26,11 +26,11 @@ export default function MovieCard(props) {
     return (
         <Card className='card'>
             <span className={`material-icons-outlined favorite ${ props.favorited ? 'favorited' : '' }`} onClick={() => favoriteHandler()}>star</span>
-            <Card.Img variant="top" className='preview' src={ props.movie.image } />
+            <Card.Img variant="top" className='preview' src={ props.movie.urlImg } />
             <Card.Body>
-                <Card.Title>{ props.movie.title }</Card.Title>
+                <Card.Title>{ props.movie.titulo }</Card.Title>
                 <Card.Text>
-                    { props.movie.description }
+                    { props.movie.descricao }
                 </Card.Text>
                 <Button variant="primary" onClick={() => props.openDetails(props.movie)}>Detalhes</Button>
             </Card.Body>

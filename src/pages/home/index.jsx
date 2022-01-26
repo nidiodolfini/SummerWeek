@@ -4,36 +4,13 @@ import { useState, useEffect } from 'react'
 import { Container, Row, Col, Modal, Button, Form, Tabs, Tab } from 'react-bootstrap'
 import MovieCard from '../../components/card'
 import { FavoritesContext } from '../../providers/favorites'
+import api from '../../services/api'
 
 export default function Home() {
 
     const { favorites } = React.useContext(FavoritesContext)
 
-    // console.log(favorites)
-
-    const data = [
-        {
-            id: 1,
-            image: 'https://kanto.legiaodosherois.com.br/w760-h398-gnw-cfill-q80/wp-content/uploads/2022/01/legiao_C7vptlAEgcIW.png.jpeg',
-            title: 'Teste 1',
-            description: 'Teste descrição 1'
-        },
-        {
-            id: 2,
-            image: 'https://sm.ign.com/t/ign_pt/news/j/joker-2-re/joker-2-reportedly-set-to-be-written-by-original-director_a1kp.1280.jpg',
-            title: 'Teste 2',
-            description: 'Teste descrição 2'
-        },
-        {
-            id: 3,
-            image: 'https://i2.wp.com/www.salvandonerd.blog.br/wp-content/uploads/2018/05/Watchman-HBO-Series-In-The-Works.jpg?fit=1024%2C512&ssl=1',
-            title: 'Teste 3',
-            description: 'Teste descrição 3'
-        }
-    ]
-
-    const axios = require('axios');
-
+    const [movies, setMovies] = useState([])
     const [modalVisibility, setModalVisibility] = useState(false)
     const [modalEdit, setModalEdit] = useState(false)
     const [currentMovie, setCurrentMovie] = useState({})
@@ -43,15 +20,49 @@ export default function Home() {
 
     useEffect(() => {
 
-        axios.get('https://ctdsummerweek.nerdasaservice.com.br/filme')
-            .then(
-                success => console.log(success)
-            )
-            .catch(
-                error => console.log(error)
-            )
+        getMovies()
+
+        // api.delete(`/filme/1`)
+        //     .then(
+        //         success => console.log(success)
+        //     )
+        //     .catch(
+        //         error => console.log(error)
+        //     )
+
+        // api.post(`/filme`,  {
+        //     urlImg: "string",
+        //     titulo: "string",
+        //     descricao: "string"
+        //   })
+        //     .then(
+        //         success => console.log(success)
+        //     )
+        //     .catch(
+        //         error => console.log(error)
+        //     )
 
     }, [])
+
+
+
+    function getMovies() {
+
+        api.get(`/filme`)
+            .then(
+
+                success => setMovies(success.data)
+
+            )
+            .catch(
+
+                error => console.log(error)
+
+            )
+
+    }
+
+
 
     function setDataModal(movie, isEdition) {
 
@@ -72,27 +83,81 @@ export default function Home() {
 
         }
 
-        // setCurrentMovie(movie)
-
     }
+
+
 
     function saveMovie(movie) {
 
-        if(modalEdit) {
-
-            // criar filme
-            setModalVisibility(false)
-
-        } else {
+        if (modalEdit) {
 
             // editar filme
             setModalVisibility(false)
 
+            const data = {
+                urlimg: imageField,
+                titulo: titleField,
+                descricao: descriptionField
+            }
+
+            api.put(`/filme/${currentMovie.id}`, data)
+            .then(
+
+                getMovies()
+
+            )
+            .catch(
+                error => console.log(error)
+            )
+
+        } else {
+
+            // cadastrar filme
+            setModalVisibility(false)
+
+            const data = {
+                urlimg: imageField,
+                titulo: titleField,
+                descricao: descriptionField
+            }
+
+            api.post('/filme', data)
+            .then(
+
+                getMovies()
+
+            )
+            .catch(
+
+                error => console.log(error)
+
+            )
+
         }
 
-        alert('carrega a lista novamente')
+    }
+
+
+
+    function deleteMovie(id) {
+
+        api.delete(`/filme/${id}`)
+        .then(
+
+            response => getMovies()
+
+        )
+        .catch(
+
+            error => console.log(error)
+
+        )
+
+        setModalVisibility(false)
 
     }
+
+
 
     return (
         <>
@@ -130,7 +195,7 @@ export default function Home() {
                 <Modal.Footer>
                     {
                         modalEdit &&
-                        <Button variant="danger" onClick={() => setModalVisibility(false)}>
+                        <Button variant="danger" onClick={() => deleteMovie(currentMovie.id)}>
                             Deletar
                         </Button>
                     }
@@ -151,14 +216,15 @@ export default function Home() {
                         <Container>
                             <Row>
                                 {
-                                    data.map(movie => {
+                                    movies.map(movie => {
 
                                         return (
                                             <Col sm={12} md={4} key={movie.id}>
                                                 <MovieCard
                                                     movie={movie}
-                                                    favorited={ favorites.find(item => item.id === movie.id) }
+                                                    favorited={favorites.find(item => item.id === movie.id)}
                                                     openDetails={movie => {
+                                                        setCurrentMovie(movie)
                                                         setDataModal(movie, true)
                                                     }}
                                                 />
@@ -176,21 +242,33 @@ export default function Home() {
                         <Container>
                             <Row>
                                 {
-                                    favorites.map(movie => {
+                                    favorites.length === 0 ? (
 
-                                        return (
-                                            <Col sm={12} md={4} key={movie.id}>
-                                                <MovieCard
-                                                    movie={movie}
-                                                    favorited={true}
-                                                    openDetails={movie => {
-                                                        setDataModal(movie, true)
-                                                    }}
-                                                />
-                                            </Col>
-                                        )
+                                        <div className='not-found-container'>
+                                            <span className="material-icons-outlined">search_off</span>
+                                            <h1>Nenhum filme foi encontrado</h1>
+                                            <p>Favorite algum filme para que ele possa aparecer nessa listagem</p>
+                                        </div>
 
-                                    })
+                                    ) : (
+
+                                        favorites.map(movie => {
+
+                                            return (
+                                                <Col sm={12} md={4} key={movie.id}>
+                                                    <MovieCard
+                                                        movie={movie}
+                                                        favorited={true}
+                                                        openDetails={movie => {
+                                                            setDataModal(movie, true)
+                                                        }}
+                                                    />
+                                                </Col>
+                                            )
+
+                                        })
+
+                                    )
                                 }
                             </Row>
                         </Container>
