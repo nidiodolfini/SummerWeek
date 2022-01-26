@@ -18,9 +18,17 @@ export default function Home() {
     const [titleField, setTitleField] = useState('')
     const [descriptionField, setDescriptionField] = useState('')
 
+
+
     useEffect(() => {
 
-        getMovies()
+        api.get(`/filme`)
+            .then(
+                success => setMovies(success.data)
+            )
+            .catch(
+                error => console.log(error)
+            )
 
         // api.delete(`/filme/1`)
         //     .then(
@@ -43,24 +51,6 @@ export default function Home() {
         //     )
 
     }, [])
-
-
-
-    function getMovies() {
-
-        api.get(`/filme`)
-            .then(
-
-                success => setMovies(success.data)
-
-            )
-            .catch(
-
-                error => console.log(error)
-
-            )
-
-    }
 
 
 
@@ -94,22 +84,6 @@ export default function Home() {
             // editar filme
             setModalVisibility(false)
 
-            const data = {
-                urlimg: imageField,
-                titulo: titleField,
-                descricao: descriptionField
-            }
-
-            api.put(`/filme/${currentMovie.id}`, data)
-            .then(
-
-                getMovies()
-
-            )
-            .catch(
-                error => console.log(error)
-            )
-
         } else {
 
             // cadastrar filme
@@ -124,16 +98,22 @@ export default function Home() {
             api.post('/filme', data)
             .then(
 
-                getMovies()
+                api.get(`/filme`)
+                .then(
+                    success => setMovies(success.data)
+                )
+                .catch(
+                    error => console.log(error)
+                )
 
             )
             .catch(
-
                 error => console.log(error)
-
             )
 
         }
+
+        alert('carrega a lista novamente')
 
     }
 
@@ -144,16 +124,18 @@ export default function Home() {
         api.delete(`/filme/${id}`)
         .then(
 
-            response => getMovies()
+            api.get(`/filme`)
+            .then(
+                success => setMovies(success.data)
+            )
+            .catch(
+                error => console.log(error)
+            )
 
         )
         .catch(
-
             error => console.log(error)
-
         )
-
-        setModalVisibility(false)
 
     }
 

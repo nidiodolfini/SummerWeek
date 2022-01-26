@@ -12,8 +12,8 @@ export default function MovieCard(props) {
         if(props.favorited) {
 
             const index = favorites.findIndex(favorite => favorite.id === props.movie.id)
-            setFavorites(favorites => favorites.splice(index , 1))
             console.log(index)
+            setFavorites(favorites => favorites.splice(index , 1))
 
         } else {
 
