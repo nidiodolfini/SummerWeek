@@ -1,6 +1,5 @@
 import './home.css'
-import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Container, Row, Col, Modal, Button, Form, Tabs, Tab } from 'react-bootstrap'
 import MovieCard from '../../components/card'
 import { FavoritesContext } from '../../providers/favorites'
@@ -8,7 +7,7 @@ import api from '../../services/api'
 
 export default function Home() {
 
-    const { favorites } = React.useContext(FavoritesContext)
+    const { favorites } = useContext(FavoritesContext)
 
     const [movies, setMovies] = useState([])
     const [modalVisibility, setModalVisibility] = useState(false)

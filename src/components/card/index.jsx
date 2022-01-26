@@ -1,26 +1,24 @@
 import './card.css'
-import React from 'react'
-import { Button, Card } from 'react-bootstrap';
-import { FavoritesContext } from '../../providers/favorites';
+import { useContext } from 'react'
+import { Button, Card } from 'react-bootstrap'
+import { FavoritesContext } from '../../providers/favorites'
 
 export default function MovieCard(props) {
 
-    const { favorites, setFavorites } = React.useContext(FavoritesContext)
+    const { favorites, setFavorites } = useContext(FavoritesContext)
 
     function favoriteHandler() {
 
         if(props.favorited) {
 
-            const index = favorites.findIndex(favorite => favorite.id === props.movie.id)
-            console.log(index)
-            setFavorites(favorites => favorites.splice(index , 1))
+            setFavorites( favorites => favorites.filter( item => item.id !==  props.movie.id) )
 
         } else {
 
             setFavorites(favorites => [...favorites, props.movie])
-            // console.log(favorites)
 
         }
+
     }
 
     return (
