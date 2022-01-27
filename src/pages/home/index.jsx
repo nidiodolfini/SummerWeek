@@ -17,37 +17,25 @@ export default function Home() {
     const [titleField, setTitleField] = useState('')
     const [descriptionField, setDescriptionField] = useState('')
 
+    function getMovies() {
+
+        api.get(`/filme`).then(
+
+            success => setMovies(success.data)
+
+        ).catch(
+
+            error => console.log(error)
+
+        )
+
+    }
+
 
 
     useEffect(() => {
 
-        api.get(`/filme`)
-            .then(
-                success => setMovies(success.data)
-            )
-            .catch(
-                error => console.log(error)
-            )
-
-        // api.delete(`/filme/1`)
-        //     .then(
-        //         success => console.log(success)
-        //     )
-        //     .catch(
-        //         error => console.log(error)
-        //     )
-
-        // api.post(`/filme`,  {
-        //     urlImg: "string",
-        //     titulo: "string",
-        //     descricao: "string"
-        //   })
-        //     .then(
-        //         success => console.log(success)
-        //     )
-        //     .catch(
-        //         error => console.log(error)
-        //     )
+        getMovies()
 
     }, [])
 
@@ -66,9 +54,9 @@ export default function Home() {
 
         } else {
 
-            setImageField(movie.image)
-            setTitleField(movie.title)
-            setDescriptionField(movie.description)
+            setImageField(movie.urlImg)
+            setTitleField(movie.titulo)
+            setDescriptionField(movie.descricao)
 
         }
 
@@ -78,41 +66,53 @@ export default function Home() {
 
     function saveMovie(movie) {
 
+        let formData = {
+            urlImg: imageField,
+            titulo: titleField,
+            descricao: descriptionField
+        }
+
         if (modalEdit) {
 
             // editar filme
-            setModalVisibility(false)
+
+            formData.id = currentMovie.id
+
+            api.put('/filme', formData).then(
+
+                response => {
+
+                    getMovies()
+                    setModalVisibility(false)
+
+                }
+
+            ).catch(
+
+                error => console.log(error)
+
+            )
 
         } else {
 
             // cadastrar filme
-            setModalVisibility(false)
 
-            const data = {
-                urlimg: imageField,
-                titulo: titleField,
-                descricao: descriptionField
-            }
+            api.post('/filme', formData).then(
 
-            api.post('/filme', data)
-            .then(
+                response => {
 
-                api.get(`/filme`)
-                .then(
-                    success => setMovies(success.data)
-                )
-                .catch(
-                    error => console.log(error)
-                )
+                    getMovies()
+                    setModalVisibility(false)
 
-            )
-            .catch(
+                }
+
+            ).catch(
+
                 error => console.log(error)
+
             )
 
         }
-
-        alert('carrega a lista novamente')
 
     }
 
@@ -120,20 +120,19 @@ export default function Home() {
 
     function deleteMovie(id) {
 
-        api.delete(`/filme/${id}`)
-        .then(
+        api.delete(`/filme/${id}`).then(
 
-            api.get(`/filme`)
-            .then(
-                success => setMovies(success.data)
-            )
-            .catch(
-                error => console.log(error)
-            )
+            response => {
 
-        )
-        .catch(
+                getMovies()
+                setModalVisibility(false)
+
+            }
+
+        ).catch(
+
             error => console.log(error)
+
         )
 
     }
