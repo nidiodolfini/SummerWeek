@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 
 export default function useLocalStorage (key, favoriteMovies) {
 
-    const [localStorage, setLocalStorage] = useState(
-        () => {
+    const [localStorage, setLocalStorage] = useState(() => {
 
             let value
 
@@ -19,8 +18,7 @@ export default function useLocalStorage (key, favoriteMovies) {
 
             return value
 
-        }
-    )
+    })
 
     useEffect(
         () => {
