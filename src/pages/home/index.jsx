@@ -204,7 +204,7 @@ export default function Home() {
                                                     favorited={favorites.find(item => item.id === movie.id)}
                                                     openDetails={movie => {
                                                         setCurrentMovie(movie)
-                                                        setDataModal(movie, true)
+                                                        setDataModal(movie, false)
                                                     }}
                                                 />
                                             </Col>

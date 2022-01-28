@@ -1,7 +1,7 @@
 import './card.css'
 import { useContext } from 'react'
-import { Button, Card } from 'react-bootstrap'
-import { FavoritesContext } from '../../providers/favorites'
+import { Button, Card } from 'react-bootstrap';
+import { FavoritesContext } from '../../providers/favorites';
 
 export default function MovieCard(props) {
 
@@ -9,15 +9,11 @@ export default function MovieCard(props) {
 
     function favoriteHandler() {
 
-        if(props.favorited) {
+        let movie = props.movie
 
-            setFavorites( favorites => favorites.filter( item => item.id !==  props.movie.id) )
+        movie.id = favorites[favorites.length - 1].id + 1
 
-        } else {
-
-            setFavorites(favorites => [...favorites, props.movie])
-
-        }
+        setFavorites(favorites => [...favorites, props.movie])
 
     }
 
