@@ -2,7 +2,8 @@ import axios from 'axios'
 
 const api = axios.create({
 
-  baseURL: 'http://ctdsummerweek.nerdasaservice.com.br'
+  baseURL: 'http://localhost:8081'
+  //baseURL: 'http://ctdsummerweek.nerdasaservice.com.br'
 
 })
 

@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+  nodeweb:
+    container_name: dockerfront
+    build: .
+    ports:
+      - "3001:3000"
+
